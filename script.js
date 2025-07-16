@@ -63,3 +63,48 @@ book.author.name = "João"; // AQUI O FREEZE JÁ NÃO RESTRINGE MAIS
 // RESUMO: O Object.freeze() não impede modificações profundas em objetos aninhados (shallow freezing)
 
 console.log(book);
+
+/*
+Deep freeze
+Nesta aula, vamos ver como implementar o conceito de Deep Freeze em JavaScript,
+que consiste em congelar de forma profunda um objeto, percorrendo recursivamente cada propriedade. 
+Vamos aprender como criar uma função recursiva para congelar todas as propriedades de um objeto, 
+garantindo um congelamento profundo.
+*/
+
+const book2 = {
+  title: "Objetos Imutáveis",
+  category: "Javascript",
+  author: {
+    name: "Jonas",
+    email: "jonas@email.com",
+  },
+};
+
+function deepFreeze(object) {
+  // Obtém um array com todas as propriedades do objeto.
+  const props = Reflect.ownKeys(object);
+
+  // Itera sobre todas as propriedades do objeto
+  for (const prop of props) {
+    // Obtém o valor associado a à propriedade atual.
+    const value = object[prop];
+    //console.log(value)
+
+    // Verifica se o valor é um objeto ou função para continuar aplicando deepFreeze em objetos aninhados.
+    if ((value && typeof value === "object") || typeof value === "function") {
+      deepFreeze(value);
+    }
+  }
+  // Retorna o objeto congelado.
+  return Object.freeze(object);
+}
+
+// Chama a função para congelar o objeto com Deep freeze (imutabilidade profunda)
+deepFreeze(book2);
+
+// Agora não funciona nem no shallow nem no deep
+book2.category = "HTML";
+book2.author.name = "João";
+
+console.log(book2);
